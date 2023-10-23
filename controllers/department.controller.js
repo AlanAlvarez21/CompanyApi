@@ -1,6 +1,23 @@
 const express = require("express");
 const router = express.Router();
-const Department = require('../models/departament.model');
+const Department = require('../models/department.model');
+const Company = require('../models/company.model');
+
+
+// Obtener todos los departamentos con el ID de compañía proporcionado
+router.get('/company/:companyId', async (req, res) => {
+  try {
+    const companyId = req.params.companyId; // Obtener el ID de compañía de los parámetros de la solicitud
+    const departments = await Department.find({ company: companyId }) // Buscar los departamentos con el ID de compañía proporcionado
+    .populate('leader', 'name')
+    .populate('employees', 'name');
+    res.json(departments);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // Create a new department
 router.post('/', async (req, res) => {
@@ -36,8 +53,8 @@ router.put('/:id', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
     const department = await Department.findById(req.params.id)
-        // .populate('leader')
-        // .populate('employees');
+        .populate('leader')
+        .populate('employees');
     if (!department) {
         return res.status(404).json({ error: 'Department not found' });
     }
@@ -53,8 +70,8 @@ router.get('/:id', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
     const department = await Department.find()
-        // .populate('leader')
-        // .populate('employees');
+        .populate('leader')
+        .populate('employees')
     if (!department) {
         return res.status(404).json({ error: 'Department not found' });
     }

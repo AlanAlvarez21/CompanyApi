@@ -17,7 +17,9 @@ router.post('/', async (req, res) => {
 // Get all companies
 router.get('/', async (req, res) => {
   try {
-    const companies = await Company.find();
+    const companies = await Company.find()
+      .populate('departments') // Populate the employees field
+      .populate('employees') // Populate the departments field
     res.json(companies);
   } catch (error) {
     console.log(error);
@@ -27,8 +29,10 @@ router.get('/', async (req, res) => {
 
 // Get a company by ID
 router.get('/:id', async (req, res) => {
+    console.log(req.params.id)
   try {
-    const company = await Company.findById(req.params.id);
+    const company = await Company.findById(req.params.id)
+      .populate('employees'); // Populate the employees field
     if (!company) {
       return res.status(404).json({ error: 'Company not found' });
     }
@@ -38,6 +42,7 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 // Update a company by ID
 router.put('/:id', async (req, res) => {

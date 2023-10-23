@@ -12,9 +12,16 @@ const employeeSchema = new mongoose.Schema({
     },
     leader: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Leader',
+      ref: 'Employee',
       default: null,
     },
-});
+    is_current_leader: {
+      type: Boolean,
+      ref: 'Employee',
+      default: false,
+    },
+},  
+  { strictPopulate: false },
+);
 
 module.exports = mongoose.model('Employee', employeeSchema);
