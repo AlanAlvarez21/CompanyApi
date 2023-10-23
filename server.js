@@ -1,12 +1,20 @@
 const express = require("express");
-const router = require('./router');
-const connectDB = require("./db");
-const dotenv = require("dotenv");
 const bodyParser = require("body-parser") 
+const dotenv = require("dotenv");
+
+
+// local imports 
+const connectDB = require("./db");
+// const router = require('./router');
+const employeeRoutes = require("./controllers/employee.controller")
 
 const app = express();
-app.use(bodyParser.json());
 dotenv.config();
+app.use(bodyParser.json());
+app.use('/api/employees', employeeRoutes)
+
+
+
 
 connectDB()
   .then(() => {
