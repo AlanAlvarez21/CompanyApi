@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
   try {
     const employee = new Employee(req.body);
     await employee.save();
-    res.status(201).json({ message: 'Employee created successfully' });
+    res.status(201).json({ message: 'Employee created successfully', employeeId: employee._id });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Internal Server Error' });
