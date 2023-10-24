@@ -8,9 +8,10 @@ router.get('/:id', async (req, res) => {
   try {
     const employee = await Employee.findById(req.params.id)
       .populate('department', 'name')
+      .populate('leader', 'name')
       .populate('employees', 'name')
       .populate('company', 'name')
-      .populate('leader', 'name');
+      .exec();
     if (!employee) {
       return res.status(404).json({ error: 'Employee not found' });
     }
@@ -27,7 +28,11 @@ router.get('/:id', async (req, res) => {
 // Get all employees
 router.get('/', async (req, res) => {
   try {
-    const employees = await Employee.find();
+    const employees = await Employee.find()
+    .populate('department', 'name')
+    .populate('leader', 'name')
+    .populate('employees', 'name')
+    .populate('company', 'name');
     if (!employees) {
       return res.status(404).json({ error: 'Employees not found' });
     }

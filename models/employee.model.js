@@ -10,11 +10,11 @@ const employeeSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Company',
     },
-    leader: {
+    leader: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Employee',
       default: null,
-    },
+    }],
     is_current_leader: {
       type: Boolean,
       ref: 'Employee',

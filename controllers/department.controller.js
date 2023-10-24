@@ -18,6 +18,28 @@ router.get('/company/:companyId', async (req, res) => {
   }
 });
 
+// Add a new route to get employees and leaders from one department
+router.get('/:id/employees-leaders', async (req, res) => {
+  try {
+    const departmentId = req.params.id;
+
+    // Find the department by ID and populate the leader and employees
+    const department = await Department.findById(departmentId)
+      .populate('leader', 'name')
+      .populate('employees', 'name');
+
+    if (!department) {
+      return res.status(404).json({ error: 'Department not found' });
+    }
+
+    // Extract and return just the leader and employees
+    const { leader, employees } = department;
+    res.json({ leader, employees });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // Create a new department
 router.post('/', async (req, res) => {

@@ -8,6 +8,7 @@ router.get('/:id', async (req, res) => {
     const employee = await Employee.findById(req.params.id)
       .populate('department', 'name') // Popula el campo 'department' y selecciona solo el campo 'name'
       .populate('company', 'name') // Popula el campo 'company' y selecciona solo el campo 'name'
+      .populate('employees', 'name') // Popula el campo 'company' y selecciona solo el campo 'name'
       .exec();
 
     if (!employee) {
