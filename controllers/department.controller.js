@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Department = require('../models/department.model');
 const Company = require('../models/company.model');
+const Employee = require('../models/company.model');
 
 
 // Obtener todos los departamentos con el ID de compañía proporcionado
@@ -102,6 +103,46 @@ router.get('/', async (req, res) => {
     console.log(error);
     res.status(500).json({ error: 'Internal Server Error' });
     }
+});
+
+// Agregar un empleado a un departamento específico
+router.post('/:id/add-employee', async (req, res) => {
+  try {
+    const departmentId = req.params.id;
+    const { name, is_current_leader } = req.body;
+
+    // Encuentra el departamento por ID
+    const departmentResponse = await Department.findById(departmentId);
+
+    if (!departmentResponse) {
+      return res.status(404).json({ error: 'Department not found' });
+    }
+
+    // Crea un nuevo empleado con el nombre proporcionado y establece is_current_leader en false por defecto
+    const newEmployee = new Employee({
+      name: name,
+      department: departmentId,
+      company: departmentResponse.company.toString(),
+      is_current_leader: is_current_leader,
+    });
+
+    // Guarda el nuevo empleado en la base de datos
+    await newEmployee.save();
+
+    console.log('Nuevo empleado guardado:', newEmployee);
+
+    // Agrega el ID del nuevo empleado a la lista de empleados del departamento utilizando $push
+    await Department.findByIdAndUpdate(departmentId, {
+      $push: { employees: newEmployee._id },
+    });
+
+    console.log('Departamento actualizado:', await Department.findById(departmentId));
+
+    res.status(201).json({ message: 'Employee added to department successfully', employee: newEmployee });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 
